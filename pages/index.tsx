@@ -1,6 +1,6 @@
 import React from 'react'
 import { GetStaticProps } from "next";
-import { Grid, Stack, Text } from "@chakra-ui/react";
+import { Button, Grid, Stack, Text } from "@chakra-ui/react";
 
 import { Product } from "../product/types";
 import api from "../product/api";
@@ -12,18 +12,29 @@ interface Props {
   products: Product[]
 }
 
-const IndexRoute: React.FC<Props> = ({products}) => {
+const IndexRoute: React.FC<Props> = ({ products }) => {
+
+  // Vamos a necesitar un estado donde agreguemos todos los elementos que vamos a ir teniendo en el carrito 
+  // Para estp vamos a tener un useState que se llame cart y tenga una función setcart
+
+  const [cart, setCart] = React.useState<Product[]>([]);
+
   // (Para ver que nos trae de productos) return <div>{JSON.stringify(products)}</div>;
   return (
+    <Stack>
       // Le decimos que por cada elemento que haya en productos vamos a mostrar un stack (componente de chakra que te permite ubicar las cosas en una horientazión vertical, horizontal y el espacio entre los elementos sin tener espacio en ellos)
-    <Grid gridGap={6} templateColumns="repeat(auto-fill, minmax(240px, 1fr))">
-      {products.map((product) => (
-        <Stack backgroundColor="gray.100" key={product.id}>
-          <Text>{product.title}</Text>
-        </Stack>
-      ))}
-    </Grid>
-    );
+      <Grid gridGap={6} templateColumns="repeat(auto-fill, minmax(240px, 1fr))">
+        {products.map((product) => (
+          <Stack backgroundColor="gray.100" key={product.id}>
+            <Text>{product.title}</Text>
+            <Text>{product.price}</Text>
+            <Button onClick={() => setCart(cart => cart.concat(product))} colorScheme="blue">Agregar</Button>
+          </Stack>
+        ))}
+      </Grid>
+      {Boolean(cart.length) && <Button>Ver carrito ({cart.length} productos)</Button>}
+    </Stack>
+  );
 };
 
 // Empezamos trayendonos los datos desde Google Sheets 
