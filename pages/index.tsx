@@ -1,7 +1,10 @@
 import React from 'react'
-import {GetStaticProps} from "next";
-import {Product} from "../product/types";
+import { GetStaticProps } from "next";
+import { Grid, Stack, Text } from "@chakra-ui/react";
+
+import { Product } from "../product/types";
 import api from "../product/api";
+
 
 // Acá escribimos los tipos de props que definimos en la línea 20
 // Tipo producto que va a ser un array de tipo elemento producto 
@@ -10,7 +13,17 @@ interface Props {
 }
 
 const IndexRoute: React.FC<Props> = ({products}) => {
-  return <div>{JSON.stringify(products)}</div>;
+  // (Para ver que nos trae de productos) return <div>{JSON.stringify(products)}</div>;
+  return (
+      // Le decimos que por cada elemento que haya en productos vamos a mostrar un stack (componente de chakra que te permite ubicar las cosas en una horientazión vertical, horizontal y el espacio entre los elementos sin tener espacio en ellos)
+    <Grid gridGap={6} templateColumns="repeat(auto-fill, minmax(240px, 1fr))">
+      {products.map((product) => (
+        <Stack backgroundColor="gray.100" key={product.id}>
+          <Text>{product.title}</Text>
+        </Stack>
+      ))}
+    </Grid>
+    );
 };
 
 // Empezamos trayendonos los datos desde Google Sheets 
@@ -33,6 +46,9 @@ export const getStaticProps: GetStaticProps = async () => {
       // El segundo paso es instalar alguna libreria que nos permita hacer una request desde nuestra aplicación next hacia otro lado (lo vamos a hacer con Axios) // Vamos a usar la libreria de papaparse.com que nos permite parsear .CSV <> JSON 
       products,
     },
+    // A getStaticProps le pasamos una prop que se llama revalidate y le pasamos una cantidad de segundos. A los x segundos van a ver la información cacheada del primer usuario que entro y después de los 10 el próximo que entra va a ver la info vieja pero va a triggerear un requet que va a ir hasta Google Sheet, va a traer la información, la va a parser y el próximo usuario lo va a ver actualizado
+    // Con este parametro podemos manipular cuantas veces nuestra aplicación va a ir al servidor. Esto permite ahorrar mucho en costo (SE DEJA COMENTADO)
+    // revalidate: 10
   };
 };
 
