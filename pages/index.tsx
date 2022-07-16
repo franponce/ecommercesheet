@@ -4,6 +4,7 @@ import { Button, Grid, Stack, Text } from "@chakra-ui/react";
 
 import { Product } from "../product/types";
 import api from "../product/api";
+import Link from '../node_modules/next/link';
 
 
 // Acá escribimos los tipos de props que definimos en la línea 20
@@ -12,6 +13,8 @@ interface Props {
   products: Product[]
 }
 
+
+
 const IndexRoute: React.FC<Props> = ({ products }) => {
 
   // Vamos a necesitar un estado donde agreguemos todos los elementos que vamos a ir teniendo en el carrito 
@@ -19,9 +22,12 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
 
   const [cart, setCart] = React.useState<Product[]>([]);
 
-  function handleAddToCart(product: Product) {
-    setCart((cart) => cart.concat(product))
-  }
+  // Variable para generar un texto en base a la info del carrito
+  const text = React.useMemo(() => {
+    return cart
+      .reduce((message, product) => message.concat(`* ${product.title} - $${product.price}\n`), ``)
+      .concat(`\nTotal: ${cart.reduce((total, product) => total + product.price, 0)}`)
+  }, [cart]);
 
   // (Para ver que nos trae de productos) return <div>{JSON.stringify(products)}</div>;
   return (
@@ -32,11 +38,22 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
           <Stack backgroundColor="gray.100" key={product.id}>
             <Text>{product.title}</Text>
             <Text>{product.price}</Text>
-            <Button onClick={ () => handleAddToCart(product)} colorScheme="blue">Agregar</Button>
+            <Button colorScheme="blue" onClick={() => setCart((cart) => cart.concat(product))}>
+              Agregar
+            </Button>
           </Stack>
         ))}
       </Grid>
-      {Boolean(cart.length) && <Button>Completar pedido ({cart.length} productos)</Button>}
+      {Boolean(cart.length) && (
+        <Link isExternal href={`https://wa.me/5492954271140?text=${encodeURIComponent(text)}`}
+          as={Link}>
+          <Button
+            colorScheme="whatsapp"
+          >
+            Completar pedido ({cart.length} productos)
+          </Button>
+        </Link>
+      )}
     </Stack>
   );
 };
