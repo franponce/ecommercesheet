@@ -19,6 +19,10 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
 
   const [cart, setCart] = React.useState<Product[]>([]);
 
+  function handleAddToCart(product: Product) {
+    setCart((cart => cart.concat(product))
+  }
+
   // (Para ver que nos trae de productos) return <div>{JSON.stringify(products)}</div>;
   return (
     <Stack>
@@ -28,11 +32,11 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
           <Stack backgroundColor="gray.100" key={product.id}>
             <Text>{product.title}</Text>
             <Text>{product.price}</Text>
-            <Button onClick={() => setCart(cart => cart.concat(product))} colorScheme="blue">Agregar</Button>
+            <Button onClick={ () => handleAddToCart(product)} colorScheme="blue">Agregar</Button>
           </Stack>
         ))}
       </Grid>
-      {Boolean(cart.length) && <Button>Ver carrito ({cart.length} productos)</Button>}
+      {Boolean(cart.length) && <Button>Completar pedido ({cart.length} productos)</Button>}
     </Stack>
   );
 };
