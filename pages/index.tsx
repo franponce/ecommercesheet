@@ -20,7 +20,7 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
   const [cart, setCart] = React.useState<Product[]>([]);
 
   function handleAddToCart(product: Product) {
-    setCart((cart => cart.concat(product))
+    setCart((cart) => cart.concat(product))
   }
 
   // (Para ver que nos trae de productos) return <div>{JSON.stringify(products)}</div>;
