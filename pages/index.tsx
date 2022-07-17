@@ -1,6 +1,6 @@
 import React from 'react'
 import { GetStaticProps } from "next";
-import { Button, Grid, Stack, Text } from "@chakra-ui/react";
+import { Button, Grid, Stack, Text, Flex } from "@chakra-ui/react";
 
 import { Product } from "../product/types";
 import api from "../product/api";
@@ -13,6 +13,25 @@ interface Props {
   products: Product[]
 }
 
+// Esta función lo que hace es recibir un valor del tipo number y va a devolver un string ya que queremos que devuelva el dato ya formateado con el peso el punto y demás
+/*function parseCurrency(value: number): string {
+  return value.toLocaleString('es-AR', {
+    style: 'currency',
+    currency: 'ARS'
+  })
+}*/
+
+/*type Currency = 'CLP' | 'USD' | 'JPY'
+
+type Price = {
+    price: number;
+    locale?: string
+    currency?: Currency
+}
+
+export const currencyFormatter = ({price, locale = 'en-US', currency = 'USD' }: Price): string => {
+    return new Intl.NumberFormat(locale, {style: "currency", currency: currency}).format(price)
+}*/
 
 
 const IndexRoute: React.FC<Props> = ({ products }) => {
@@ -25,20 +44,22 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
   // Variable para generar un texto en base a la info del carrito
   const text = React.useMemo(() => {
     return cart
-      .reduce((message, product) => message.concat(`* ${product.title} - $${product.price}\n`), ``)
-      .concat(`\nTotal: ${cart.reduce((total, product) => total + product.price, 0)}`)
+      .reduce((message, product) => message.concat(`* ${product.title} - ${product.price}\n`), ``) // parseCurrency(product.price)
+      .concat(`\nTotal: ${cart.reduce((total, product) => total + product.price, 0)}`) // ${parseCurrency(cart.reduce((total, product) => total + product.price, 0)
   }, [cart]);
 
   // (Para ver que nos trae de productos) return <div>{JSON.stringify(products)}</div>;
   return (
-    <Stack>
+    <Stack spacing={6}>
       // Le decimos que por cada elemento que haya en productos vamos a mostrar un stack (componente de chakra que te permite ubicar las cosas en una horientazión vertical, horizontal y el espacio entre los elementos sin tener espacio en ellos)
       <Grid gridGap={6} templateColumns="repeat(auto-fill, minmax(240px, 1fr))">
         {products.map((product) => (
-          <Stack backgroundColor="gray.100" key={product.id}>
-            <Text>{product.title}</Text>
-            <Text>{product.price}</Text>
-            <Button colorScheme="blue" onClick={() => setCart((cart) => cart.concat(product))}>
+          <Stack spacing={3} borderRadius="md" padding={4} backgroundColor="gray.100" key={product.id}>
+            <Stack spacing={1}>
+              <Text>{product.title}</Text>
+              <Text fontSize="sm" fontWeight="500" color="black.500">{product.price}</Text> // parseCurrency(product.price)
+            </Stack>
+            <Button colorScheme="primary" variant="outline" size="sm" onClick={() => setCart((cart) => cart.concat(product))}>
               Agregar
             </Button>
           </Stack>
@@ -48,11 +69,27 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
         <Link isExternal href={`https://wa.me/5492954271140?text=${encodeURIComponent(text)}`}
           as={Link}>
           <Button
+            width="100%"
+            // Queda anclado en lavista mobile con bottom y positions sticky
+            position="sticky"
+            bottom={0}
             colorScheme="whatsapp"
           >
             Completar pedido ({cart.length} productos)
           </Button>
         </Link>
+
+        /*<Flex bottom={0} position="sticky" alignItems="center" justifyContent="center">
+         <Button
+         isExternal
+         as={Link}
+         colorScheme="whatsapp"
+         href={`https://wa.me/5492954271140?text=${encodeURIComponent(text)}`}
+         width="fit-content"
+         >
+           Completar pedido ({cart.length} productos)
+         </Button>
+       </Flex>*/
       )}
     </Stack>
   );
