@@ -108,6 +108,11 @@ export const getStaticProps: GetStaticProps = async () => {
   const products = await api.list();
 
   return {
+
+    // A getStaticProps le pasamos una prop que se llama revalidate y le pasamos una cantidad de segundos. A los x segundos van a ver la información cacheada del primer usuario que entro y después de los 10 el próximo que entra va a ver la info vieja pero va a triggerear un requet que va a ir hasta Google Sheet, va a traer la información, la va a parser y el próximo usuario lo va a ver actualizado
+    // Con este parametro podemos manipular cuantas veces nuestra aplicación va a ir al servidor. Esto permite ahorrar mucho en costo (SE DEJA COMENTADO)
+    revalidate: 10,
+
     // que devuelva props productos siendo un array vacio
     props: {
       // Ahora nos vamos a traer los datos de la API de Google Sheet
@@ -115,9 +120,7 @@ export const getStaticProps: GetStaticProps = async () => {
       // El segundo paso es instalar alguna libreria que nos permita hacer una request desde nuestra aplicación next hacia otro lado (lo vamos a hacer con Axios) // Vamos a usar la libreria de papaparse.com que nos permite parsear .CSV <> JSON 
       products,
     },
-    // A getStaticProps le pasamos una prop que se llama revalidate y le pasamos una cantidad de segundos. A los x segundos van a ver la información cacheada del primer usuario que entro y después de los 10 el próximo que entra va a ver la info vieja pero va a triggerear un requet que va a ir hasta Google Sheet, va a traer la información, la va a parser y el próximo usuario lo va a ver actualizado
-    // Con este parametro podemos manipular cuantas veces nuestra aplicación va a ir al servidor. Esto permite ahorrar mucho en costo (SE DEJA COMENTADO)
-    // revalidate: 10
+    
   };
 };
 
